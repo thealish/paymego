@@ -1,4 +1,4 @@
-package subscribe_api
+package subscribe
 
 type ResponseCard struct {
 	Number    string `json:"number"`
@@ -10,8 +10,18 @@ type ResponseCard struct {
 
 type CardsCreateResponse struct {
 	Jsonrpc string `json:"jsonrpc"`
-	ID      int    `json:"id"`
+	ID      string `json:"id"`
 	Result  struct {
 		Card ResponseCard `json:"card"`
+	} `json:"result"`
+}
+
+type CardsGetVerifyCodeResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  struct {
+		Sent  bool   `json:"sent"`
+		Phone string `json:"phone"`
+		Wait  int    `json:"wait"`
 	} `json:"result"`
 }
