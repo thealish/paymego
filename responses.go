@@ -1,4 +1,4 @@
-package subscribe
+package paymego
 
 type ResponseCard struct {
 	Number    string `json:"number"`
@@ -23,5 +23,29 @@ type CardsGetVerifyCodeResponse struct {
 		Sent  bool   `json:"sent"`
 		Phone string `json:"phone"`
 		Wait  int    `json:"wait"`
+	} `json:"result"`
+}
+
+type CardsVerifyResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  struct {
+		Card ResponseCard `json:"card"`
+	} `json:"result"`
+}
+
+type CardsCheckResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  struct {
+		Card ResponseCard `json:"card"`
+	} `json:"result"`
+}
+
+type CardsRemoveResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	ID      int    `json:"id"`
+	Result  struct {
+		Success bool `json:"success"`
 	} `json:"result"`
 }

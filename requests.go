@@ -1,6 +1,12 @@
-package subscribe
+package paymego
 
 import "encoding/json"
+
+type baseRequest struct {
+	RequestID string            `json:"request_id"`
+	Method    string            `json:"method"`
+	Params    map[string]string `json:"params"`
+}
 
 type requestParams struct {
 	RequestCard requestCard `json:"card"`
@@ -19,9 +25,7 @@ type cardsCreateRequest struct {
 }
 
 type cardsGetVerifyCodeRequest struct {
-	RequestID string            `json:"request_id"`
-	Method    string            `json:"method"`
-	Params    map[string]string `json:"params"`
+	baseRequest
 }
 
 type cardsVerifyRequest struct {
@@ -30,19 +34,37 @@ type cardsVerifyRequest struct {
 	Params    map[string]string `json:"params"`
 }
 
-type CardsVerifyResponse struct {
-	Jsonrpc string `json:"jsonrpc"`
-	ID      int    `json:"id"`
-	Result  struct {
-		Card ResponseCard `json:"card"`
-	} `json:"result"`
+type cardsCheckRequest struct {
+	baseRequest
+}
+
+type cardsRemoveRequest struct {
+	baseRequest
+}
+
+func newCardsRemoveRequest(requestID, token string) ([]byte, error) {
+	return json.Marshal(cardsRemoveRequest{baseRequest{
+		RequestID: requestID,
+		Params:    map[string]string{"token": token},
+		Method:    cardsRemove,
+	}})
+}
+
+func newCardsCheckRequest(requestID, token string) ([]byte, error) {
+	return json.Marshal(cardsCheckRequest{baseRequest{
+		RequestID: requestID,
+		Params:    map[string]string{"token": token},
+		Method:    cardCheck,
+	}})
 }
 
 func newCardsGetVerifyCodeRequest(requestID, token string) ([]byte, error) {
 	return json.Marshal(cardsGetVerifyCodeRequest{
-		RequestID: requestID,
-		Method:    cardsGetVerifyCode,
-		Params:    map[string]string{"token": token},
+		baseRequest{
+			RequestID: requestID,
+			Method:    cardsGetVerifyCode,
+			Params:    map[string]string{"token": token},
+		},
 	})
 }
 

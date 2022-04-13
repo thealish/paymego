@@ -1,4 +1,4 @@
-package subscribe
+package paymego
 
 import "fmt"
 

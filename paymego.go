@@ -1,40 +1,57 @@
-package main
+package paymego
 
 import (
-	"context"
-	"fmt"
-	"github.com/thealish/paymego/subscribe"
-	"log"
-	"math/rand"
-	"strconv"
+	"errors"
 )
 
 var (
-	prodURL = "https://checkout.paycom.uz/api"
-	testURL = "https://checkout.test.paycom.uz/api"
+	prodURL        = "https://checkout.paycom.uz/api"
+	testURL        = "https://checkout.test.paycom.uz/api"
+	ErrInvalidMode = errors.New("invalid mode")
 )
 
-func main() {
-	s, err := subscribe.New(&subscribe.SubsribeAPIOpts{
-		PaycomID:  "paycomID",
-		PaycomKey: "paycomKey",
-		BaseURL:   testURL,
-	})
-	if err != nil {
-		panic(err)
+type PaymeGoMode int
+
+const (
+	Production PaymeGoMode = iota
+	Test
+)
+
+type PaymeCardsForTest int
+
+const (
+	ExpiredTestCard PaymeCardsForTest = iota
+	BlockedTestCard
+	CardWithUnexpectedError
+	CardWithTimeoutError
+	CardWithSmsInformingDisabled
+	CardWithNoError
+)
+
+func (p PaymeCardsForTest) String() string {
+	switch p {
+	case ExpiredTestCard:
+		return "3333336415804657"
+	case BlockedTestCard:
+		return "4444445987459073"
+	case CardWithTimeoutError:
+		return "8600134301849596"
+	case CardWithUnexpectedError:
+		return "8600143417770323"
+	case CardWithNoError:
+		return "8600495473316478"
+	case CardWithSmsInformingDisabled:
+		return "8600060921090842"
 	}
-	r, err := s.Cards.Create(context.Background(), strconv.Itoa(rand.Int()), "8600495473316478", "03/99", false)
-	if err != nil {
-		log.Fatalf("err %s", err)
+	return ""
+}
+
+func (p PaymeGoMode) string() (string, error) {
+	switch p {
+	case Production:
+		return prodURL, nil
+	case Test:
+		return testURL, nil
 	}
-
-	_, err = s.Cards.GetVerifyCode(context.Background(), strconv.Itoa(rand.Int()), r.Result.Card.Token)
-	if err != nil {
-		log.Fatalf("err %s", err)
-	}
-
-	verifyCode, err := s.Cards.Verify(context.Background(), strconv.Itoa(rand.Int()), "666666", r.Result.Card.Token)
-
-	fmt.Println(verifyCode, err)
-
+	return "", ErrInvalidMode
 }

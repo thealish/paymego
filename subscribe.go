@@ -1,4 +1,4 @@
-package subscribe
+package paymego
 
 import (
 	"bytes"
@@ -34,7 +34,6 @@ var (
 type SubscribeAPI struct {
 	headers    xAuthHeaders
 	baseURL    string
-	Cards      ICardsRepository
 	httpClient http.Client
 	logger     *log.Logger
 }
@@ -42,25 +41,27 @@ type SubscribeAPI struct {
 type SubsribeAPIOpts struct {
 	PaycomID   string
 	PaycomKey  string
-	BaseURL    string
+	Mode       PaymeGoMode
 	Logger     *log.Logger
 	httpClient http.Client
 }
 
-// New returns new instance of SubscribeAPI
-func New(args *SubsribeAPIOpts) (SubscribeAPI, error) {
+// NewSubscribeAPI returns new instance of SubscribeAPI
+func NewSubscribeAPI(args *SubsribeAPIOpts) (SubscribeAPI, error) {
 	err := args.validate()
+	if err != nil {
+		return SubscribeAPI{}, err
+	}
+	baseUrlFromMode, err := args.Mode.string()
 	if err != nil {
 		return SubscribeAPI{}, err
 	}
 	subscribeAPI := SubscribeAPI{
 		httpClient: args.httpClient,
-		baseURL:    args.BaseURL,
+		baseURL:    baseUrlFromMode,
 		logger:     args.Logger,
 		headers:    getXAuthHeaders(args.PaycomID, args.PaycomKey),
 	}
-
-	subscribeAPI.Cards = newCardsRepository(subscribeAPI)
 
 	return subscribeAPI, nil
 }
@@ -89,6 +90,7 @@ func (s *SubscribeAPI) do(
 		request.Header = s.headers.withoutPaycomKey()
 	}
 	res, err := s.httpClient.Do(request)
+	defer res.Body.Close()
 	if err != nil {
 		return err
 	}
@@ -106,6 +108,7 @@ func (s *SubscribeAPI) do(
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
