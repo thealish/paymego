@@ -3,9 +3,9 @@ package paymego
 import "encoding/json"
 
 type baseRequest struct {
-	RequestID string            `json:"request_id"`
-	Method    string            `json:"method"`
-	Params    map[string]string `json:"params"`
+	RequestID string                 `json:"request_id"`
+	Method    string                 `json:"method"`
+	Params    map[string]interface{} `json:"params"`
 }
 
 type requestParams struct {
@@ -45,7 +45,7 @@ type cardsRemoveRequest struct {
 func newCardsRemoveRequest(requestID, token string) ([]byte, error) {
 	return json.Marshal(cardsRemoveRequest{baseRequest{
 		RequestID: requestID,
-		Params:    map[string]string{"token": token},
+		Params:    map[string]interface{}{"token": token},
 		Method:    cardsRemove,
 	}})
 }
@@ -53,7 +53,7 @@ func newCardsRemoveRequest(requestID, token string) ([]byte, error) {
 func newCardsCheckRequest(requestID, token string) ([]byte, error) {
 	return json.Marshal(cardsCheckRequest{baseRequest{
 		RequestID: requestID,
-		Params:    map[string]string{"token": token},
+		Params:    map[string]interface{}{"token": token},
 		Method:    cardCheck,
 	}})
 }
@@ -63,7 +63,7 @@ func newCardsGetVerifyCodeRequest(requestID, token string) ([]byte, error) {
 		baseRequest{
 			RequestID: requestID,
 			Method:    cardsGetVerifyCode,
-			Params:    map[string]string{"token": token},
+			Params:    map[string]interface{}{"token": token},
 		},
 	})
 }
@@ -91,4 +91,47 @@ func newCardsVerifyRequest(requestID, token, code string) ([]byte, error) {
 			"code":  code,
 		},
 	})
+}
+
+type Account struct {
+	OrderID  string `json:"order_id"`
+	CardID   string `json:"card_id"`
+	ReasonID string `json:"reason_id"`
+}
+
+func newCreateReceiptRequest(requestID, desc, detail string, amount int, account Account) ([]byte, error) {
+	baseRequest := baseRequest{
+		RequestID: requestID,
+		Method:    create,
+		Params:    make(map[string]interface{}),
+	}
+	baseRequest.Params = map[string]interface{}{
+		"account":     account,
+		"amount":      amount,
+		"description": desc,
+		"detail":      detail,
+	}
+	return json.Marshal(baseRequest)
+}
+
+type Payer struct {
+	ID    string `json:"id"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	IP    string `json:"ip"`
+}
+
+func newPayReceiptRequest(requestID, token, ID string, payer Payer) ([]byte, error) {
+	baseRequest := baseRequest{
+		RequestID: requestID,
+		Method:    pay,
+		Params:    make(map[string]interface{}),
+	}
+	baseRequest.Params = map[string]interface{}{
+		"token": token,
+		"id":    ID,
+		"payer": payer,
+	}
+	return json.Marshal(baseRequest)
 }

@@ -41,24 +41,21 @@ type SubscribeAPI struct {
 type SubsribeAPIOpts struct {
 	PaycomID   string
 	PaycomKey  string
-	Mode       PaymeGoMode
 	Logger     *log.Logger
-	httpClient http.Client
+	HTTPClient http.Client
+	BaseURL    string
 }
 
 // NewSubscribeAPI returns new instance of SubscribeAPI
-func NewSubscribeAPI(args *SubsribeAPIOpts) (SubscribeAPI, error) {
+func NewSubscribeAPI(args SubsribeAPIOpts) (SubscribeAPI, error) {
 	err := args.validate()
 	if err != nil {
 		return SubscribeAPI{}, err
 	}
-	baseUrlFromMode, err := args.Mode.string()
-	if err != nil {
-		return SubscribeAPI{}, err
-	}
+
 	subscribeAPI := SubscribeAPI{
-		httpClient: args.httpClient,
-		baseURL:    baseUrlFromMode,
+		httpClient: args.HTTPClient,
+		baseURL:    args.BaseURL,
 		logger:     args.Logger,
 		headers:    getXAuthHeaders(args.PaycomID, args.PaycomKey),
 	}
