@@ -36,3 +36,15 @@ func (s SubscribeAPI) PayReceipt(
 	err = s.do(ctx, request, http.MethodPost, &response, true)
 	return response, err
 }
+
+func (s SubscribeAPI) CheckReceipt(
+	ctx context.Context, requestID, receiptID string,
+) (CheckReceiptResponse, error) {
+	request, err := newCheckReceiptRequest(requestID, receiptID)
+	if err != nil {
+		return CheckReceiptResponse{}, err
+	}
+	var response CheckReceiptResponse
+	err = s.do(ctx, request, http.MethodPost, &response, true)
+	return response, err
+}

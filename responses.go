@@ -107,3 +107,18 @@ type PayReceiptResponse struct {
 		Receipt Receipt `json:"receipt"`
 	} `json:"result"`
 }
+type CheckReceiptResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	Id      int    `json:"id"`
+	Result  struct {
+		State int `json:"state"`
+	} `json:"result"`
+}
+
+type CardsCheckBalanceResponse struct {
+	Jsonrpc string `json:"jsonrpc"`
+	Id      int    `json:"id"`
+	Result  struct {
+		Success bool `json:"success"`
+	} `json:"result"`
+}

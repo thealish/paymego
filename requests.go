@@ -135,3 +135,28 @@ func newPayReceiptRequest(requestID, token, ID string, payer Payer) ([]byte, err
 	}
 	return json.Marshal(baseRequest)
 }
+
+func newCheckReceiptRequest(requestID, receiptID string) ([]byte, error) {
+	baseRequest := baseRequest{
+		RequestID: requestID,
+		Method:    cardCheck,
+		Params:    make(map[string]interface{}),
+	}
+	baseRequest.Params = map[string]interface{}{
+		"id": receiptID,
+	}
+	return json.Marshal(baseRequest)
+}
+
+func newCardsCheckBalanceRequest(requestID, token string, amount int) ([]byte, error) {
+	baseRequest := baseRequest{
+		RequestID: requestID,
+		Method:    cardCheckBalance,
+		Params:    make(map[string]interface{}),
+	}
+	baseRequest.Params = map[string]interface{}{
+		"token":  token,
+		"amount": amount,
+	}
+	return json.Marshal(baseRequest)
+}

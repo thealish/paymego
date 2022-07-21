@@ -89,3 +89,20 @@ func (s SubscribeAPI) CardsRemove(
 	}
 	return &response, err
 }
+
+func (s SubscribeAPI) CardsCheckBalance(
+	ctx context.Context,
+	requestID, token string,
+	amount int,
+) (CardsCheckBalanceResponse, error) {
+	request, err := newCardsCheckBalanceRequest(requestID, token, amount)
+	if err != nil {
+		return CardsCheckBalanceResponse{}, err
+	}
+	var response CardsCheckBalanceResponse
+	err = s.do(ctx, request, http.MethodPost, &response, true)
+	if err != nil {
+		return CardsCheckBalanceResponse{}, err
+	}
+	return response, err
+}
