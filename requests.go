@@ -160,3 +160,17 @@ func newCardsCheckBalanceRequest(requestID, token string, amount int) ([]byte, e
 	}
 	return json.Marshal(baseRequest)
 }
+
+func newP2PReceiptsRequest(requestID, token, description string, amount int) ([]byte, error) {
+	baseRequest := baseRequest{
+		RequestID: requestID,
+		Method:    createp2p,
+		Params:    make(map[string]interface{}),
+	}
+	baseRequest.Params = map[string]interface{}{
+		"token":       token,
+		"amount":      amount,
+		"description": description,
+	}
+	return json.Marshal(baseRequest)
+}
