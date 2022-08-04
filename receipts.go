@@ -48,3 +48,16 @@ func (s SubscribeAPI) CheckReceipt(
 	err = s.do(ctx, request, http.MethodPost, &response, true)
 	return response, err
 }
+
+func (s SubscribeAPI) CreateP2P(
+	ctx context.Context, requestID, token, description string,
+	amount int,
+) (CreateReceiptP2PResponse, error) {
+	request, err := newP2PReceiptsRequest(requestID, token, description, amount)
+	if err != nil {
+		return CreateReceiptP2PResponse{}, err
+	}
+	var response CreateReceiptP2PResponse
+	err = s.do(ctx, request, http.MethodPost, &response, true)
+	return response, err
+}
