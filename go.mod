@@ -1,4 +1,4 @@
-module github.com/Muhammadali-Akbarov/paymego
+module github.com/thealish/paymego
 
 go 1.19
 
