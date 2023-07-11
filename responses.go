@@ -6,6 +6,7 @@ type ResponseCard struct {
 	Token     string `json:"token"`
 	Recurrent bool   `json:"recurrent"`
 	Verify    bool   `json:"verify"`
+	CardHash  string `json:"number_hash"`
 }
 
 type CardsCreateResponse struct {
